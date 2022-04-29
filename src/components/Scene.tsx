@@ -4,13 +4,20 @@ import {
   useFrame,
 } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
+import { Physics } from '@react-three/cannon';
 
 function Boid() {
-  const ref = useRef<any>();
+  const ref = useRef<any>([0, 0, 0]);
 
   useFrame(() => {
-    const boid = ref.current;
-    boid.velocity.add(boid.acceleration);
+    const { current } = ref;
+    const position = current.position;
+    const rotation = current.rotation;
+    position.x = Math.sin(Date.now() * 0.001) * .5;
+    position.y = Math.sin(Date.now() * 0.0001) * 2;
+    position.z = Math.sin(Date.now() * 0.0005) * 2;
+    rotation.z += .01;
+    rotation.y += .01;
   });
 
   return (
@@ -24,18 +31,17 @@ function Boid() {
 export default function Scene() {
   return (
     <Canvas
-      camera={{
-        position: [0, 0, 1],
-      }}
       style={{
-        backgroundColor: 'black'
+        backgroundColor: 'white'
       }}
     >
-      <OrbitControls />
-      <Stars />
-      <ambientLight intensity={.1} />
-      <pointLight position={[0, 2, 4]} />
-      <Boid />
+      <Physics>
+        <OrbitControls />
+        <Stars />
+        <ambientLight intensity={.1} />
+        <pointLight position={[0, 2, 4]} />
+        <Boid />
+        </Physics>
     </Canvas>
   )
 }
